@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>ThanhDieu Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {margin: 0; padding: 0; box-sizing: border-box;}
+    html, body {
+      width: 100%; height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      overflow: hidden;
+    }
+    .horizontal-container {
+      display: flex;
+      width: 200vw;
+      height: 100vh;
+      transition: transform 0.6s ease;
+    }
+    .vertical-wrapper {
+      width: 100vw;
+      height: 200vh;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.6s ease;
+    }
+    .section {
+      width: 100%;
+      height: 100vh;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+    .effect1 {
+      background: url('https://i.imgur.com/U8iOeX4.jpg') center center/cover no-repeat;
+      color: white;
+    }
+    .effect2 {
+      background: linear-gradient(to right, #000428, #004e92);
+      color: white;
+    }
+    .arrow {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      animation: bounce 1.5s infinite;
+      cursor: pointer;
+    }
+    .arrow svg {
+      width: 40px;
+      height: 40px;
+      stroke: white;
+      stroke-width: 2;
+      fill: none;
+    }
+    @keyframes bounce {
+      0%, 100% {transform: translateY(0);}
+      50% {transform: translateY(10px);}
+    }
+    .avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid white;
+      margin-bottom: 10px;
+    }
+    .name {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .quote {
+      font-size: 14px;
+      max-width: 90%;
+      margin-top: 5px;
+    }
+    .bio1, .bio2 {
+      padding: 0;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .home-header {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      font-weight: bold;
+      font-size: 18px;
+      cursor: pointer;
+      background: linear-gradient(270deg, #ff70a6, #d66efd, #70d6ff);
+      background-size: 600% 600%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientShift 6s ease infinite;
+      z-index: 10;
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="horizontal-container" id="hContainer">
+  <!-- Trang bên trái (Hiệu ứng 1 + Bio 1) -->
+  <div class="vertical-wrapper" id="vLeft">
+    <!-- Hiệu ứng 1 -->
+    <div class="section effect1">
+      <img src="avatar.jpg" class="avatar">
+      <div class="name">ThanhDieu</div>
+      <div class="quote" id="quote1">"Câu nói hay đầu tiên..."</div>
+      <div class="arrow">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 5v14m0 0l-6-6m6 6l6-6" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+    <!-- Bio 1 -->
+    <div class="section bio1">
+      <div class="home-header" onclick="goToEffectFromBio(1)">ThanhDieu Home</div>
+      <iframe src="bio/bio1.html"></iframe>
+    </div>
+  </div>
+
+  <!-- Trang bên phải (Hiệu ứng 2 + Bio 2) -->
+  <div class="vertical-wrapper" id="vRight">
+    <!-- Hiệu ứng 2 -->
+    <div class="section effect2">
+      <img src="avatar.jpg" class="avatar">
+      <div class="name">ThanhDieu</div>
+      <div class="quote" id="quote2">"Câu nói hay thứ hai..."</div>
+      <div class="arrow">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 5v14m0 0l-6-6m6 6l6-6" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+    <!-- Bio 2 -->
+    <div class="section bio2">
+      <div class="home-header" onclick="goToEffectFromBio(2)">ThanhDieu Home</div>
+      <iframe src="bio/bio2.html"></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+  let horizontalIndex = 0;
+  let verticalPositions = [0, 0];
+  const hContainer = document.getElementById("hContainer");
+  const vLeft = document.getElementById("vLeft");
+  const vRight = document.getElementById("vRight");
+
+  function updateTransforms() {
+    hContainer.style.transform = `translateX(-${horizontalIndex * 100}vw)`;
+    vLeft.style.transform = `translateY(-${verticalPositions[0] * 100}vh)`;
+    vRight.style.transform = `translateY(-${verticalPositions[1] * 100}vh)`;
+  }
+
+  let startX = 0, startY = 0;
+  document.addEventListener("touchstart", (e) => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  });
+
+  document.addEventListener("touchend", (e) => {
+    let deltaX = e.changedTouches[0].clientX - startX;
+    let deltaY = e.changedTouches[0].clientY - startY;
+    const atEffect1 = horizontalIndex === 0 && verticalPositions[0] === 0;
+    const atEffect2 = horizontalIndex === 1 && verticalPositions[1] === 0;
+
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      if (deltaX < -50 && atEffect1) horizontalIndex = 1;
+      else if (deltaX > 50 && atEffect2) horizontalIndex = 0;
+    } else {
+      if (horizontalIndex === 0 && deltaY < -50 && verticalPositions[0] === 0) verticalPositions[0] = 1;
+      if (horizontalIndex === 1 && deltaY < -50 && verticalPositions[1] === 0) verticalPositions[1] = 1;
+    }
+    updateTransforms();
+  });
+
+  document.querySelectorAll(".arrow").forEach((arrow, idx) => {
+    arrow.addEventListener("click", () => {
+      if (idx === 0 && verticalPositions[0] === 0) verticalPositions[0] = 1;
+      if (idx === 1 && verticalPositions[1] === 0) verticalPositions[1] = 1;
+      updateTransforms();
+    });
+  });
+
+  function goToEffectFromBio(bioNum) {
+    if (bioNum === 1) {
+      horizontalIndex = 1;
+      verticalPositions[1] = 0;
+    } else {
+      horizontalIndex = 0;
+      verticalPositions[0] = 0;
+    }
+    updateTransforms();
+  }
+
+  const quotes1 = [
+    "Có người rủ anh đi ăn tối, nhưng anh từ chối vì thực đơn không có em.",
+    "Thanh xuân như một tách trà, sống không cà khịa thì quá uổng phí.",
+    "Em là mặt trời, vì em xuất hiện là anh thấy chói mắt.",
+    "Anh thích em hơn tất cả các dòng code anh từng viết."
+  ];
+  const quotes2 = [
+    "Mỗi lần gặp em, anh thấy như trình duyệt mới mở tab.",
+    "Nếu em là bug thì anh nguyện debug cả đời.",
+    "Trái tim anh giống như vòng lặp vô tận, không thể thoát khỏi em.",
+    "Chạy task nào cũng được, miễn là được chạy bên em."
+  ];
+  let q1 = 0, q2 = 0;
+  setInterval(() => {
+    q1 = (q1 + 1) % quotes1.length;
+    q2 = (q2 + 1) % quotes2.length;
+    document.getElementById("quote1").innerText = quotes1[q1];
+    document.getElementById("quote2").innerText = quotes2[q2];
+  }, 5000);
+</script>
+</body>
+</html>
